@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+    *::-webkit-scrollbar {
+        width: 5px;
+    }
+    *::-webkit-scrollbar-thumb {
+        @apply bg-primary rounded-2xl;
+    }
+}
+
+@layer utilities {
+    .bg-primary-gradient {
+        @apply bg-gradient-to-b from-primary-900 to-secondary-900;
+    }
+}
