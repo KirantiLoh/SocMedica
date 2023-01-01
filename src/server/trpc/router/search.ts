@@ -5,10 +5,11 @@ export const searchRouter = router({
     findUsers: protectedProcedure
         .input(z.object({
             query: z.string(),
-            cursor: z.string().nullish()
+            cursor: z.string().nullish(),
+            limit: z.number().min(1).nullish(),
         }))
         .query(async ({ctx, input}) => {
-            const limit = 3;
+            const limit = input.limit ?? 3;
             const users = await ctx.prisma.user.findMany({
                 where: {
                     name: {

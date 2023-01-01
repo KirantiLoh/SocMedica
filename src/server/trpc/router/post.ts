@@ -172,5 +172,32 @@ export const postRouter = router({
                 });
                 return {message: "Liked post"};
             }
-        })
+        }),
+    deletePost: protectedProcedure
+        .input(z.object({
+            postId: z.string()
+        }))
+        .mutation(async ({ctx, input}) => {
+            const { session, prisma } = ctx;
+            const post = await prisma.post.findUnique({
+                where: {
+                    id: input.postId
+                }
+            });
+            if (!post) return {message: "Post not found"};
+            if (post.senderId !== session.user.id) return {message: "Unauthorized"};
+            await prisma.post.delete({
+                where: {
+                    id: input.postId
+                }
+            });
+            return {message: "Post deleted!"};
+        }),
+    reportPost: protectedProcedure
+        .input(z.object({
+            postId: z.string()
+        }))
+        .mutation(({}) => {
+            return;
+        }),
 })

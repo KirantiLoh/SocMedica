@@ -45,7 +45,7 @@ const Home: NextPage = () => {
 })
 
   return (
-      <section className="w-full overflow-y-auto">
+      <section className="w-full max-w-[600px] overflow-y-auto">
         <section className="z-[1] flex sticky w-full h-max p-3 top-0 left-0 bg-secondary-900 bg-opacity-60 backdrop-blur-sm">
           <h1 className="text-2xl font-bold">Home</h1>
         </section>
