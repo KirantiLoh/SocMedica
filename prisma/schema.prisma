@@ -3,18 +3,19 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Post {
-  id        String      @id @default(cuid())
-  senderId  String
-  content   String
-  createdAt DateTime    @default(now())
-  LikedPost LikedPost[]
-  sender    User        @relation("posts", fields: [senderId], references: [id], onDelete: Cascade)
+  id           String         @id @default(cuid())
+  senderId     String
+  content      String
+  createdAt    DateTime       @default(now())
+  LikedPost    LikedPost[]
+  sender       User           @relation("posts", fields: [senderId], references: [id], onDelete: Cascade)
+  ReportedPost ReportedPost[]
 }
 
 model LikedPost {
@@ -24,6 +25,17 @@ model LikedPost {
   createdAt DateTime @default(now())
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ReportedPost {
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  createdAt DateTime @default(now())
+
+  @@id([userId, postId])
 }
 
 model Follower {
@@ -62,18 +74,19 @@ model Session {
 }
 
 model User {
-  id            String      @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String?     @unique
+  email         String?        @unique
   emailVerified DateTime?
   image         String?
-  createdAt     DateTime    @default(now())
+  createdAt     DateTime       @default(now())
   accounts      Account[]
-  followers     Follower[]  @relation("following")
-  following     Follower[]  @relation("followed")
+  followers     Follower[]     @relation("following")
+  following     Follower[]     @relation("followed")
   LikedPost     LikedPost[]
-  posts         Post[]      @relation("posts")
+  posts         Post[]         @relation("posts")
   sessions      Session[]
+  ReportedPost  ReportedPost[]
 }
 
 model VerificationToken {

@@ -1,15 +1,20 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useInView } from 'react-cool-inview';
 import Post from 'src/components/Post';
 import SearchBar from 'src/components/SearchBar';
+import { LoadingScreenContext } from 'src/context/LoadingScreenContext';
 import { trpc } from 'src/utils/trpc';
 
 const ExplorePage = () => {
 
+    const { setShowScreen } = useContext(LoadingScreenContext);
+
     const { data: postList, fetchNextPage } = trpc.post.getAllPosts.useInfiniteQuery({
         limit: 10
     }, {
-        getNextPageParam: (lastPage, allPages) => lastPage.nextCursor ? lastPage.nextCursor : allPages[allPages.length - 1]?.nextCursor
+        getNextPageParam: (lastPage, allPages) => lastPage.nextCursor ? lastPage.nextCursor : allPages[allPages.length - 1]?.nextCursor,
+        cacheTime: 0,
+        onSuccess: () => setShowScreen(false)
     })
 
     const { observe } = useInView({
@@ -25,20 +30,24 @@ const ExplorePage = () => {
     const posts = postList?.pages.map(postsData => {
         return postsData.allPosts.map(post => {
             return (
-                <div key={post.id} ref={observe}>
+                <div key={post.id} className="w-full" ref={observe}>
                   <Post likes={post._count.LikedPost ?? 0} {...post} />
                 </div>
             )
         })
     });
 
+    useEffect(() => {
+        setShowScreen(true);
+      }, [setShowScreen])
+
     return (
         <main className='w-full max-w-[600px] h-screen overflow-y-auto'>
             <section className="z-[1] flex sticky w-full h-max p-3 top-0 left-0 bg-secondary-900 bg-opacity-60 backdrop-blur-sm">
                 <SearchBar />
             </section>
-            <section className="pl-3">
-                <h1 className="text-2xl font-bold py-5">Explore</h1>
+            <section className="p-3">
+                <h1 className="text-2xl font-bold mb-5">Explore</h1>
                 <ul className='flex flex-wrap gap-10'>
                     {posts}
                 </ul>

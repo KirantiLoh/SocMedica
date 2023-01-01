@@ -1,21 +1,18 @@
 import { type NextPage } from "next";
-// import { useSession } from "next-auth/react";
+import { useContext, useEffect } from "react";
 import { useInView } from "react-cool-inview";
 import Post from "src/components/Post";
+import { LoadingScreenContext } from "src/context/LoadingScreenContext";
 import { trpc } from "src/utils/trpc";
-// import Link from "next/link";
-// import { signIn, signOut, useSession } from "next-auth/react";
-
-// import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
-  // const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
 
-  // const { data: session } = useSession();
+  const { setShowScreen } = useContext(LoadingScreenContext);
 
   const { data: postList, fetchNextPage } = trpc.post.getFollowingPosts.useInfiniteQuery({}, {
     getNextPageParam: (lastPage, allPages) => lastPage.nextCursor ? lastPage.nextCursor : allPages[allPages.length - 1]?.nextCursor,
     cacheTime: 0,
+    onSuccess: () => setShowScreen(false)
   });
 
   const { observe } = useInView({
@@ -32,7 +29,7 @@ const Home: NextPage = () => {
     if (postsData.allPosts.length > 0) {
       return postsData.allPosts.map(post => {
           return (
-              <div key={post.id} ref={observe}>
+              <div key={post.id} className="w-full" ref={observe}>
                   <Post likes={post._count.LikedPost ?? 0} {...post} />
               </div>
           )
@@ -42,7 +39,11 @@ const Home: NextPage = () => {
         <h2 key={index}>You didn&apos;t follow anyone...</h2>
       )
     }
-})
+});
+
+  useEffect(() => {
+    setShowScreen(true);
+  }, [setShowScreen])
 
   return (
       <section className="w-full max-w-[600px] overflow-y-auto">

@@ -20,6 +20,8 @@ const Post = ({
     id
 }: PostProps) => {
 
+    const postRef = useRef<HTMLDivElement>(null);
+
     const toggleLike = trpc.post.toggleLikePost.useMutation({
         onSuccess(data) {
             if (data.message === "Unliked post") {
@@ -30,7 +32,9 @@ const Post = ({
         },
     });
 
-    const deletePost = trpc.post.deletePost.useMutation();
+    const deletePost = trpc.post.deletePost.useMutation({
+        onSuccess: () => postRef.current?.remove()
+    });
 
     const { data: isFollowing, refetch } = trpc.user.getFollowingInfo.useQuery({
         followingId: sender.id
@@ -43,6 +47,10 @@ const Post = ({
     const unfollowUser = trpc.follower.unfollowUser.useMutation({
         onSuccess: () => refetch()
     });
+
+    const reportPost = trpc.post.reportPost.useMutation({
+        onSuccess: () => postRef.current?.remove()
+    })
 
     const { data: session } = useSession();
 
@@ -69,7 +77,7 @@ const Post = ({
     }
 
     return (
-        <div className='relative flex p-1 min-w-[300px] w-full max-w-[300px] gap-4 text-white'>
+        <div ref={postRef} className='relative flex p-1 min-w-[300px] w-full  gap-4 text-white'>
             <Link href={`/${sender.name}`} className="w-[40px] h-[40px] relative">
                 <Image src={sender.image || ""} alt="" fill className="rounded-full transition-all duration-300 hover:brightness-75" />
             </Link>
@@ -111,7 +119,7 @@ const Post = ({
                         <FaTrashAlt /> Delete
                     </li>
                     :
-                    <li className='cursor-pointer flex items-center gap-2 transition-colors hover:text-red-600 p-2'>
+                    <li onClick={() => reportPost.mutate({postId: id})} className='cursor-pointer flex items-center gap-2 transition-colors hover:text-red-600 p-2'>
                         <FaFlag /> Report
                     </li>
                 }

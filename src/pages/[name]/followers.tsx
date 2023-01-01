@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { FaArrowLeft } from 'react-icons/fa';
 import UserCard from 'src/components/UserCard';
 import { LoadingScreenContext } from 'src/context/LoadingScreenContext';
@@ -24,6 +24,10 @@ const FollowingPage = () => {
     const { data } = trpc.user.getFollowers.useQuery({id: profile?.id as string}, {
         enabled: !!profile?.id
     });
+
+    useEffect(() => {
+        setShowScreen(true);
+      }, [setShowScreen]);
 
     if (profile) {
         return (

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { FaArrowLeft } from 'react-icons/fa';
 import UserCard from 'src/components/UserCard';
 import { LoadingScreenContext } from 'src/context/LoadingScreenContext';
@@ -25,7 +25,9 @@ const FollowingPage = () => {
         enabled: !!profile?.id
     });
 
-    console.log(router.pathname.endsWith("following"))
+    useEffect(() => {
+        setShowScreen(true);
+      }, [setShowScreen])
 
     if (profile) {
         return (
