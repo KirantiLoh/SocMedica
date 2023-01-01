@@ -197,7 +197,13 @@ export const postRouter = router({
         .input(z.object({
             postId: z.string()
         }))
-        .mutation(({}) => {
-            return;
+        .mutation(async ({ctx, input}) => {
+            await ctx.prisma.reportedPost.create({
+                data: {
+                    userId: ctx.session.user.id,
+                    postId: input.postId
+                }
+            });
+            return {message: "Reported post"};
         }),
 })
