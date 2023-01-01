@@ -95,7 +95,7 @@ const ProfilePage = () => {
     // max-w-[600px]
     if (profile) {
         return (
-            <section className='flex flex-col gap-4 p-3  overflow-y-scroll'>
+            <section className='flex flex-col gap-4 p-3 max-w-[600px] overflow-y-scroll'>
                 <aside className='flex flex-col gap-3'>
                     <div className="flex items-center justify-between">
                         <div className='flex items-center gap-2'>

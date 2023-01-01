@@ -33,7 +33,7 @@ const ExplorePage = () => {
     });
 
     return (
-        <main className='w-full h-screen overflow-y-auto'>
+        <main className='w-full max-w-[600px] h-screen overflow-y-auto'>
             <section className="z-[1] flex sticky w-full h-max p-3 top-0 left-0 bg-secondary-900 bg-opacity-60 backdrop-blur-sm">
                 <SearchBar />
             </section>

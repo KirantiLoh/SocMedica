@@ -13,9 +13,7 @@ const SearchPage = () => {
   const router = useRouter();
   const { q } = router.query;
 
-  console.log(q);
-
-  const { data: userList, fetchNextPage: getMoreUsers } = trpc.search.findUsers.useInfiniteQuery({query: q as string}, {
+  const { data: userList, fetchNextPage: getMoreUsers } = trpc.search.findUsers.useInfiniteQuery({query: q as string, limit: 1}, {
     enabled: !!q,
     getNextPageParam: (lastPage, allPages) => lastPage.nextCursor ? lastPage.nextCursor : allPages[allPages.length - 1]?.nextCursor,
   });
@@ -82,7 +80,7 @@ const SearchPage = () => {
           {users}
           { userList?.pages[userList.pages.length - 1]?.nextCursor &&
             <li>
-              <Button color='secondary' onClick={() => getMoreUsers()}>
+              <Button color='secondary' className='w-max' onClick={() => getMoreUsers()}>
                 Find more
               </Button>
             </li>
