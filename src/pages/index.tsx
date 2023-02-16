@@ -42,7 +42,7 @@ const Home: NextPage = () => {
     } else {
       return (
         <div key={index} className="flex flex-col items-center justify-center w-full">
-          <h2 className="font-medium text-lg -mb-5">You didn&apos;t follow anyone...</h2>
+          <h2 className="font-medium text-lg -mb-5">No posts were found...</h2>
           <Image src="/sad.png" alt="From designs.ai" width={400} height={400} />
           <Button color="secondary" className="w-max px-20 -mt-5" href="/explore">
             Explore
