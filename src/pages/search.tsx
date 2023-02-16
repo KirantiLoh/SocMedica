@@ -1,5 +1,5 @@
-import { useRouter } from 'next/router'
-import React, { useContext, useEffect } from 'react'
+import { useRouter } from 'next/router';
+import { useContext, useEffect } from 'react';
 import { useInView } from 'react-cool-inview';
 import { FaArrowLeft } from 'react-icons/fa';
 import Button from 'src/components/Button';
@@ -48,7 +48,10 @@ const SearchPage = () => {
       })
     } else {
       return (
+        <>
         <h2 key={index}>No users found...</h2>
+
+        </>
       )
     }
   })
@@ -64,7 +67,12 @@ const SearchPage = () => {
       })
     } else {
       return (
+        <>
         <h2 key={index}>No posts found...</h2>
+        <Button color="secondary" className="w-max px-20" href="/explore">
+            Explore
+          </Button>
+        </>
       )
     }
 });
@@ -97,7 +105,7 @@ const SearchPage = () => {
       </section>
       <section className='p-3'>
         <h2 className='text-lg font-semibold mb-2'>Posts</h2>
-        <ul className='flex items-center gap-3 flex-wrap'>
+        <ul className='flex gap-3 flex-col'>
           {posts}
         </ul>      
       </section>
