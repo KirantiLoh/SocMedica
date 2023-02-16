@@ -1,6 +1,6 @@
 import { signIn, useSession } from 'next-auth/react';
 import type { ReactNode } from 'react';
-import { createContext } from 'react'
+import { createContext } from 'react';
 import LoadingScreen from 'src/components/LoadingScreen';
 
 const AuthContext = createContext({});

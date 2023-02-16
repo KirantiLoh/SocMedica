@@ -1,11 +1,12 @@
-import { useRouter } from 'next/router'
-import React from 'react'
+import { useRouter } from 'next/router';
+import { useContext, useEffect } from 'react';
 import { useInView } from 'react-cool-inview';
 import { FaArrowLeft } from 'react-icons/fa';
 import Button from 'src/components/Button';
 import Post from 'src/components/Post';
 import SearchBar from 'src/components/SearchBar';
 import UserCard from 'src/components/UserCard';
+import { LoadingScreenContext } from 'src/context/LoadingScreenContext';
 import { trpc } from 'src/utils/trpc';
 
 const SearchPage = () => {
@@ -13,9 +14,9 @@ const SearchPage = () => {
   const router = useRouter();
   const { q } = router.query;
 
-  console.log(q);
+  const { setShowScreen } = useContext(LoadingScreenContext);
 
-  const { data: userList, fetchNextPage: getMoreUsers } = trpc.search.findUsers.useInfiniteQuery({query: q as string}, {
+  const { data: userList, fetchNextPage: getMoreUsers } = trpc.search.findUsers.useInfiniteQuery({query: q as string, limit: 1}, {
     enabled: !!q,
     getNextPageParam: (lastPage, allPages) => lastPage.nextCursor ? lastPage.nextCursor : allPages[allPages.length - 1]?.nextCursor,
   });
@@ -23,6 +24,7 @@ const SearchPage = () => {
   const { data: postList, fetchNextPage: getMorePosts } = trpc.search.findPosts.useInfiniteQuery({query: q as string, limit: 15}, {
     enabled: !!q,
     getNextPageParam: (lastPage, allPages) => lastPage.nextCursor ? lastPage.nextCursor : allPages[allPages.length - 1]?.nextCursor,
+    onSuccess: () => setShowScreen(false)
   });
 
   const { observe } = useInView({
@@ -46,7 +48,10 @@ const SearchPage = () => {
       })
     } else {
       return (
+        <>
         <h2 key={index}>No users found...</h2>
+
+        </>
       )
     }
   })
@@ -55,20 +60,29 @@ const SearchPage = () => {
     if (postsData.posts.length > 0) {
       return postsData.posts.map(post => {
           return (
-              <div key={post.id} ref={observe}>
+              <div key={post.id} className="w-full" ref={observe}>
                 <Post likes={post._count.LikedPost ?? 0} {...post} />
               </div>
           )
       })
     } else {
       return (
+        <>
         <h2 key={index}>No posts found...</h2>
+        <Button color="secondary" className="w-max px-20" href="/explore">
+            Explore
+          </Button>
+        </>
       )
     }
 });
 
+  useEffect(() => {
+    setShowScreen(true);
+  }, [setShowScreen])
+
   return (
-    <main className='overflow-y-auto w-full'>
+    <main className='overflow-y-auto w-full max-w-[600px]'>
         <section className="z-[1] flex sticky w-full h-max p-3 top-0 left-0 bg-secondary-900 bg-opacity-60 backdrop-blur-sm">
           <div className="flex items-center gap-3">
             <FaArrowLeft className='cursor-pointer text-2xl' onClick={() => router.back()} />
@@ -82,7 +96,7 @@ const SearchPage = () => {
           {users}
           { userList?.pages[userList.pages.length - 1]?.nextCursor &&
             <li>
-              <Button color='secondary' onClick={() => getMoreUsers()}>
+              <Button color='secondary' className='w-max' onClick={() => getMoreUsers()}>
                 Find more
               </Button>
             </li>
@@ -91,7 +105,7 @@ const SearchPage = () => {
       </section>
       <section className='p-3'>
         <h2 className='text-lg font-semibold mb-2'>Posts</h2>
-        <ul className='flex items-center gap-3 flex-wrap'>
+        <ul className='flex gap-3 flex-col'>
           {posts}
         </ul>      
       </section>

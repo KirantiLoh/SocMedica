@@ -1,31 +1,30 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-const main =async () => {
-    if (!prisma) return;
-    const user = await prisma.user.findFirst({
-        where: {
-            name: "Miranti"
-        }
-    })
-    if (!user) return;
-    const amount = [...Array(90).keys()]
-    for (const i of amount) {
-        await prisma.post.create({
-            data: {
-                content: `Post ${i}, testing follower feature!`,
-                senderId: user.id
-            }
-        })
-    }
+async function main() {
+  const user = "cle5py9hx0000vn0s2m9tebt2";
+
+  const arr = [...Array(100).keys()];
+
+  console.log("Seeding db...");
+  for (const val of arr) {
+    await prisma.post.create({
+      data: {
+        senderId: user,
+        content: `Post no ${val}`,
+      },
+    });
+  }
 }
 
 main()
-    .then(async () => {
-      await prisma.$disconnect()
-    })
-    .catch(async (e) => {
-      console.error(e)
-      await prisma.$disconnect()
-      process.exit(1)
-    })
+  .then(async () => {
+    console.log("Done!");
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    console.log("Error in seeding");
+    await prisma.$disconnect();
+    process.exit(1);
+  });
