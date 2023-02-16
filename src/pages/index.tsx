@@ -61,7 +61,7 @@ const Home: NextPage = () => {
         <section className="z-[1] flex sticky w-full h-max p-3 top-0 left-0 bg-secondary-900 bg-opacity-60 backdrop-blur-sm">
           <h1 className="text-2xl font-bold">Home</h1>
         </section>
-        <section className="p-3 py-8">
+        <section className="p-3 sm:px-5 py-8">
           <ul className='flex flex-wrap gap-10'>
               {posts}
           </ul>

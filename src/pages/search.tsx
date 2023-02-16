@@ -105,7 +105,7 @@ const SearchPage = () => {
       </section>
       <section className='p-3'>
         <h2 className='text-lg font-semibold mb-2'>Posts</h2>
-        <ul className='flex items-center gap-3 flex-wrap'>
+        <ul className='flex gap-3 flex-col'>
           {posts}
         </ul>      
       </section>

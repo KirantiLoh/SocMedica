@@ -10,6 +10,7 @@ import Button from 'src/components/Button';
 import Post from 'src/components/Post';
 import { useCreatePost } from 'src/context/CreatePostContext';
 import { LoadingScreenContext } from 'src/context/LoadingScreenContext';
+import { useToast } from 'src/context/ToastContext';
 import { trpc } from 'src/utils/trpc';
     
 const ProfilePage = () => {
@@ -19,6 +20,8 @@ const ProfilePage = () => {
     const { setShowScreen } = useContext(LoadingScreenContext);
 
     const { setShowModal } = useCreatePost();
+
+    const { setContent, setType, toggle } = useToast();
 
     const { data: session } = useSession();
 
@@ -46,15 +49,31 @@ const ProfilePage = () => {
 
     const follow = trpc.follower.followUser.useMutation({
         onSuccess() {
+            setType("success");
+            setContent(`Followed ${profile?.name}`);
+            toggle();
             refetchProfile();
             refetchFollowingStatus();
+        },
+        onError: () => {
+            setType("error");
+            setContent(`Please try again`);
+            toggle();
         }
     });
 
     const unfollow = trpc.follower.unfollowUser.useMutation({
         onSuccess() {
+            setType("success");
+            setContent(`Unfollowed ${profile?.name}`);
+            toggle();
             refetchProfile();
             refetchFollowingStatus();
+        },
+        onError: () => {
+            setType("error");
+            setContent(`Please try again`);
+            toggle();
         }
     });
 

@@ -1,11 +1,12 @@
 import type { Post as BasePostProps, User } from '@prisma/client';
-import Image from 'next/image';
-import React, { useRef, useState } from 'react'
-import { FaFlag, FaHeart, FaTrashAlt, FaUserPlus, FaUserTimes } from 'react-icons/fa';
-import { trpc } from 'src/utils/trpc';
-import { BsThreeDots } from "react-icons/bs";
-import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRef, useState } from 'react';
+import { BsThreeDots } from "react-icons/bs";
+import { FaFlag, FaHeart, FaTrashAlt, FaUserPlus, FaUserTimes } from 'react-icons/fa';
+import { useToast } from 'src/context/ToastContext';
+import { trpc } from 'src/utils/trpc';
 
 interface PostProps extends Omit<BasePostProps, "senderId"> {
     likes: number
@@ -21,6 +22,8 @@ const Post = ({
 }: PostProps) => {
 
     const postRef = useRef<HTMLDivElement>(null);
+
+    const { setContent, setType, toggle } = useToast();
 
     const toggleLike = trpc.post.toggleLikePost.useMutation({
         onSuccess(data) {
@@ -41,15 +44,45 @@ const Post = ({
     })
 
     const followUser = trpc.follower.followUser.useMutation({
-        onSuccess: () => refetch()
+        onSuccess: () => {
+            setType("success");
+            setContent(`Followed ${sender.name}`);
+            toggle();
+            refetch();
+        },
+        onError: () => {
+            setType("error");
+            setContent(`Please try again`);
+            toggle();
+        }
     });
 
     const unfollowUser = trpc.follower.unfollowUser.useMutation({
-        onSuccess: () => refetch()
+        onSuccess: () => {
+            setType("success");
+            setContent(`Unfollowed ${sender.name}`);
+            toggle();
+            refetch();
+        },
+        onError: () => {
+            setType("error");
+            setContent(`Please try again`);
+            toggle();
+        }
     });
 
     const reportPost = trpc.post.reportPost.useMutation({
-        onSuccess: () => postRef.current?.remove()
+        onSuccess: () => {
+            setType("success");
+            setContent(`Report successful`);
+            toggle();
+            postRef.current?.remove();
+        },
+        onError: () => {
+            setType("error");
+            setContent(`Please try again`);
+            toggle();
+        }
     })
 
     const { data: session } = useSession();
@@ -130,3 +163,6 @@ const Post = ({
 }
 
 export default Post
+
+// Tonton video prof menaldi buat laporan, diringkas 500 - 1000 kata
+// Refleksi kan video prof menaldi penerapannya pada kehidupan sehari2
