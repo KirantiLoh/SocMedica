@@ -1,11 +1,11 @@
-import { createContext, useContext, useState } from 'react';
-import type { ReactNode , Dispatch, SetStateAction, SyntheticEvent} from "react";
 import { useSession } from 'next-auth/react';
-import Button from 'src/components/Button';
-import { FaTimes } from 'react-icons/fa';
 import Image from 'next/image';
-import { trpc } from 'src/utils/trpc';
+import type { Dispatch, ReactNode, SetStateAction, SyntheticEvent } from "react";
+import { createContext, useContext, useState } from 'react';
+import { FaTimes } from 'react-icons/fa';
+import Button from 'src/components/Button';
 import Emoji from 'src/components/Emoji';
+import { trpc } from 'src/utils/trpc';
 
 interface ICreatePostContext {
     showModal: boolean;
@@ -47,6 +47,7 @@ export const CreatePostProvider = ({children}: {children: ReactNode}) => {
 
     return (
         <CreatePostContext.Provider value={contextValue}>
+            {children}
             <section className={`z-40 text-white fixed top-0 left-0 max-w-[600px] w-full h-screen md:h-max md:w-[600px] md:top-1/2 md:-translate-x-1/2 md:left-1/2 md:-translate-y-1/2 flex flex-col gap-3 p-3 bg-primary-900 rounded-xl transition-all duration-500 origin-bottom md:origin-center ${showModal ? "scale-y-100 md:scale-100" : "scale-y-0 md:scale-0"}`}>
                 <FaTimes className='text-2xl cursor-pointer' onClick={() => closeModal()} />
                 <div className="flex gap-3">
@@ -63,7 +64,6 @@ export const CreatePostProvider = ({children}: {children: ReactNode}) => {
                 </div>
             </section>
             <div className={`${showModal ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"} bg-black w-full h-screen fixed inset-0 z-30 transition-opacity duration-500 bg-opacity-50`}></div>
-            {children}
         </CreatePostContext.Provider>
     )
 }

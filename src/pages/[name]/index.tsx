@@ -1,21 +1,24 @@
-import type { SyntheticEvent} from 'react';
-import { useContext, useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import type { SyntheticEvent } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useInView } from 'react-cool-inview';
+import { FaCalendarAlt } from 'react-icons/fa';
+import Button from 'src/components/Button';
+import Post from 'src/components/Post';
+import { useCreatePost } from 'src/context/CreatePostContext';
 import { LoadingScreenContext } from 'src/context/LoadingScreenContext';
 import { trpc } from 'src/utils/trpc';
-import Image from 'next/image';
-import Post from 'src/components/Post';
-import { useInView } from 'react-cool-inview';
-import { useSession } from 'next-auth/react';
-import Button from 'src/components/Button';
-import { FaCalendarAlt } from 'react-icons/fa';
-import Link from 'next/link';
-
+    
 const ProfilePage = () => {
 
     const router = useRouter();
     const { name } = router.query;
     const { setShowScreen } = useContext(LoadingScreenContext);
+
+    const { setShowModal } = useCreatePost();
 
     const { data: session } = useSession();
 
@@ -95,8 +98,8 @@ const ProfilePage = () => {
     // max-w-[600px]
     if (profile) {
         return (
-            <section className='flex flex-col gap-4 p-3 max-w-[600px] w-full overflow-y-scroll'>
-                <aside className='flex flex-col gap-3'>
+            <section className='flex flex-col gap-4 p-5 max-w-[600px] w-full overflow-y-scroll'>
+                <aside className='flex flex-col gap-5'>
                     <div className="flex items-center justify-between">
                         <div className='flex items-center gap-2'>
                             <div className="relative w-12 h-12 md:w-16 md:h-16">
@@ -166,11 +169,20 @@ const ProfilePage = () => {
                             </ul>
                         </aside>
                         :
-                        <h2>This user has no posts</h2>
+                        <div className="flex flex-col items-center justify-center w-full">
+                          <h2 className="font-medium text-lg -mb-5">{profile.name} didn&apos;t post anything...</h2>
+                          <Image src="/sad.png" alt="From designs.ai" width={400} height={400} />
+                          {session?.user?.id === profile.id ?
+                          <Button color="secondary" className="w-max px-20 -mt-5" onClick={() => setShowModal(true)}>
+                            Create Post
+                          </Button>
+                          : null}
+                        </div>
                     }
             </section>
         )
     }
+    else if (!isLoading  && !profile) {
     return (
         <section className='flex flex-col gap-4 p-3'>
             <aside className='flex items-center gap-2'>
@@ -182,6 +194,8 @@ const ProfilePage = () => {
             </aside>
         </section>
     )
+    }
+    return <></>
 }
 
 export default ProfilePage;
