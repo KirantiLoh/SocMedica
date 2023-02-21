@@ -7,6 +7,7 @@ import { trpc } from "../utils/trpc";
 import SideNav from "src/components/SideNav";
 import { AuthProvider } from "src/context/AuthContext";
 import { ToastProvider } from "src/context/ToastContext";
+import { UpdatePostProvider } from "src/context/UpdatePostContext";
 import { CreatePostProvider } from "../context/CreatePostContext";
 import { LoadingScreenProvider } from "../context/LoadingScreenContext";
 import "../styles/globals.css";
@@ -21,15 +22,17 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <LoadingScreenProvider>
           <ToastProvider>
             <CreatePostProvider>
-              <Head>
-                <title>SocMeDic</title>
-                <meta name="description" content="SocMeDic" />
-                <link rel="icon" href="/favicon.ico" />
-              </Head>
-              <main className="w-full h-screen overflow-hidden flex bg-secondary-900 text-white">
-                <SideNav />
-                <Component {...pageProps} />
-              </main>
+              <UpdatePostProvider>
+                <Head>
+                  <title>SocMeDic</title>
+                  <meta name="description" content="SocMeDic" />
+                  <link rel="icon" href="/favicon.ico" />
+                </Head>
+                <main className="w-full h-screen overflow-hidden flex bg-secondary-900 text-white">
+                  <SideNav />
+                  <Component {...pageProps} />
+                </main>
+              </UpdatePostProvider>
             </CreatePostProvider>
           </ToastProvider>
         </LoadingScreenProvider>

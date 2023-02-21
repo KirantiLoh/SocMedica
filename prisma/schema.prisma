@@ -16,6 +16,7 @@ model Post {
   LikedPost    LikedPost[]
   sender       User           @relation("posts", fields: [senderId], references: [id], onDelete: Cascade)
   ReportedPost ReportedPost[]
+  isPrivate      Boolean        @default(false)
 }
 
 model LikedPost {
@@ -39,12 +40,13 @@ model ReportedPost {
 }
 
 model Follower {
-  id          String   @id @default(cuid())
-  userId      String
-  followingId String
-  createdAt   DateTime @default(now())
-  following   User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
-  user        User     @relation("followed", fields: [userId], references: [id], onDelete: Cascade)
+  id            String   @id @default(cuid())
+  userId        String
+  followingId   String
+  createdAt     DateTime @default(now())
+  following     User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+  user          User     @relation("followed", fields: [userId], references: [id], onDelete: Cascade)
+  isCloseFriend Boolean  @default(false)
 }
 
 model Account {

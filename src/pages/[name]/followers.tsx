@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useContext, useEffect } from 'react'
+import { useContext, useEffect } from 'react';
 import { FaArrowLeft } from 'react-icons/fa';
 import UserCard from 'src/components/UserCard';
 import { LoadingScreenContext } from 'src/context/LoadingScreenContext';
