@@ -1,11 +1,11 @@
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import type { ReactNode } from "react";
-import { FaHome, FaCompass, FaUser, FaPen, FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
-import Button from './Button';
+import { useEffect, useState } from 'react';
+import { FaCompass, FaHome, FaPen, FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
 import { useCreatePost } from 'src/context/CreatePostContext';
+import Button from './Button';
 
 const NavLink = ({children, href}: {href: string, children: ReactNode}) => {
     return (
@@ -40,8 +40,8 @@ const SideNav = () => {
     }, [])
 
     return (
-        <nav onClick={() => setShowSideNav(false)} className={`z-20 bg-primary-900 h-screen transition-all duration-500 top-0 ${showSideNav ? "left-0" : "left-[-150%]"} w-full fixed xs:static xs:w-max md:w-[200px] px-1 md:px-5 py-9 xs:py-4 text-white flex flex-col items-center justify-between gap-5`}>
-            <h1 className='text-4xl xs:text-2xl font-semibold'>
+        <nav className={`z-20 bg-primary-900 h-screen transition-all duration-500 top-0 ${showSideNav ? "left-0" : "left-[-150%]"} w-full fixed xs:static xs:w-max md:w-[200px] px-1 md:px-5 py-9 xs:py-4 text-white flex flex-col items-center justify-between gap-5`}>
+            <h1 onClick={() => setShowSideNav(false)} className='text-4xl xs:text-2xl font-semibold'>
                 <Link href="/" className='flex items-center gap-3'>
                     <div className="relative w-[45px] aspect-square">
                         <Image src="/SocMeDic.png" fill alt="SocMeDic" />
@@ -49,7 +49,7 @@ const SideNav = () => {
                      <span className='block xs:hidden md:block'>SocMeDic</span>     
                 </Link>
             </h1>
-            <ul className='flex flex-col items-center justify-center gap-7'>
+            <ul onClick={() => setShowSideNav(false)} className='flex flex-col items-center justify-center gap-7'>
                 <li>
                     <NavLink href='/'>
                         <FaHome /> <span className='block xs:hidden md:block'>Home</span>

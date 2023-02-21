@@ -117,7 +117,7 @@ const ProfilePage = () => {
     // max-w-[600px]
     if (profile) {
         return (
-            <section className='flex flex-col gap-4 p-5 max-w-[600px] w-full overflow-y-scroll'>
+            <section className='flex flex-col gap-4 p-3 sm:p-5 max-w-[600px] w-full overflow-y-scroll'>
                 <aside className='flex flex-col gap-5'>
                     <div className="flex items-center justify-between">
                         <div className='flex items-center gap-2'>
@@ -161,13 +161,13 @@ const ProfilePage = () => {
                         <ul className="flex flex-wrap gap-5 items-center">
                             <li>
                                 {profile._count.following} 
-                                <Link href={`/${name}/following`} className='text-gray-400 ml-1 transition-colors hover:text-primary-100'>
+                                <Link href={`/${name}/following`} className='hover:underline underline-offset-4 text-gray-400 ml-1 transition-colors hover:text-primary-100'>
                                     Following
                                 </Link>
                             </li>
                             <li>
                                 {profile._count.followers} 
-                                <Link href={`/${name}/followers`} className='text-gray-400 ml-1 transition-colors hover:text-primary-100'>
+                                <Link href={`/${name}/followers`} className='hover:underline underline-offset-4 text-gray-400 ml-1 transition-colors hover:text-primary-100'>
                                     Followers
                                 </Link>
                             </li>

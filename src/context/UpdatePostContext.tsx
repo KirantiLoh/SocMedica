@@ -8,30 +8,37 @@ import Emoji from 'src/components/Emoji';
 import { trpc } from 'src/utils/trpc';
 import { useToast } from './ToastContext';
 
-interface ICreatePostContext {
+interface IUpdatePostContext {
     showModal: boolean;
     setShowModal: Dispatch<SetStateAction<boolean>>;
+    setIsPrivate: Dispatch<SetStateAction<boolean>>;
+    setContent: Dispatch<SetStateAction<string>>;
+    setPostId: Dispatch<SetStateAction<string>>;
 }
 
-const CreatePostContext = createContext<ICreatePostContext>({
+const UpdatePostContext = createContext<IUpdatePostContext>({
     showModal: false,
-    setShowModal: undefined as unknown as Dispatch<SetStateAction<boolean>>
+    setShowModal: undefined as unknown as Dispatch<SetStateAction<boolean>>,
+    setIsPrivate: undefined as unknown as Dispatch<SetStateAction<boolean>>,
+    setContent: undefined as unknown as Dispatch<SetStateAction<string>>,
+    setPostId: undefined as unknown as Dispatch<SetStateAction<string>>
 });
 
-export const CreatePostProvider = ({children}: {children: ReactNode}) => {
+export const UpdatePostProvider = ({children}: {children: ReactNode}) => {
 
     const [showModal, setShowModal] = useState(false);
     const [isPrivate, setIsPrivate] = useState(false);
     const [content, setContent] = useState("");
+    const [postId, setPostId] = useState("");
 
     const { setContent: setMessage, setType, toggle } = useToast();
 
     const { data: session } = useSession();
 
-    const createPost = trpc.post.createPost.useMutation({
+    const updatePost = trpc.post.updatePost.useMutation({
         onSuccess: () => {
             setType("success");
-            setMessage(`Post created!`);
+            setMessage(`Post updated!`);
             toggle();
         },
         onError: () => {
@@ -44,22 +51,26 @@ export const CreatePostProvider = ({children}: {children: ReactNode}) => {
     const handleSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
         if (!content) return;
-        createPost.mutate({content: content, isPrivate: isPrivate });
+        updatePost.mutate({id: postId, content: content, isPrivate: isPrivate });
         closeModal();
     }
 
     const closeModal = () => {
+        setPostId("");
         setContent("");
         setShowModal(false);
     }
 
     const contextValue = {
         showModal,
-        setShowModal
+        setShowModal,
+        setPostId,
+        setIsPrivate,
+        setContent,
     }
 
     return (
-        <CreatePostContext.Provider value={contextValue}>
+        <UpdatePostContext.Provider value={contextValue}>
             {children}
             <section className={`z-40 text-white fixed top-0 left-0 max-w-[600px] w-full h-screen md:h-max md:w-[600px] md:top-1/2 md:-translate-x-1/2 md:left-1/2 md:-translate-y-1/2 flex flex-col gap-3 p-3 bg-primary-900 rounded-xl transition-all duration-500 origin-bottom md:origin-center ${showModal ? "scale-y-100 md:scale-100" : "scale-y-0 md:scale-0"}`}>
                 <FaTimes className='text-2xl cursor-pointer' onClick={() => closeModal()} />
@@ -74,21 +85,21 @@ export const CreatePostProvider = ({children}: {children: ReactNode}) => {
                             } else {
                                 setIsPrivate(false);
                             }
-                        }} className='mb-3 p-1 px-2 bg-transparent border-2 border-primary rounded-full'>
+                        }} value={isPrivate ? "true" : "false"} className='mb-3 p-1 px-2 bg-transparent border-2 border-primary rounded-full'>
                             <option className='bg-primary' value="false">Everyone</option>
                             <option className='bg-primary' value="true">Private</option>
                         </select>
                         <textarea cols={30} rows={5} value={content} onChange={e => setContent(e.target.value)} placeholder="Create a post" className="mb-3 bg-transparent resize-none border-b-2 border-primary-100 w-full outline-none placeholder:text-white placeholder:text-opacity-80"></textarea>
                         <Emoji setText={setContent} />
                         <Button disabled={!content} color='primary'>
-                            Create
+                            Update
                         </Button>
                     </form>
                 </div>
             </section>
             <div className={`${showModal ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"} bg-black w-full h-screen fixed inset-0 z-30 transition-opacity duration-500 bg-opacity-50`}></div>
-        </CreatePostContext.Provider>
+        </UpdatePostContext.Provider>
     )
 }
 
-export const useCreatePost = () => useContext(CreatePostContext)
+export const useUpdatePost = () => useContext(UpdatePostContext)

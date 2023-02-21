@@ -4,8 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRef, useState } from 'react';
 import { BsThreeDots } from "react-icons/bs";
-import { FaFlag, FaHeart, FaTrashAlt, FaUserPlus, FaUserTimes } from 'react-icons/fa';
+import { FaFlag, FaHeart, FaPencilAlt, FaTrashAlt, FaUserPlus, FaUserTimes } from 'react-icons/fa';
 import { useToast } from 'src/context/ToastContext';
+import { useUpdatePost } from 'src/context/UpdatePostContext';
 import { trpc } from 'src/utils/trpc';
 
 interface PostProps extends Omit<BasePostProps, "senderId"> {
@@ -18,12 +19,13 @@ const Post = ({
     createdAt,
     sender,
     likes,
-    id
+    id,
+    isPrivate
 }: PostProps) => {
 
     const postRef = useRef<HTMLDivElement>(null);
 
-    const { setContent, setType, toggle } = useToast();
+    const { setContent: setMessage, setType, toggle } = useToast();
 
     const toggleLike = trpc.post.toggleLikePost.useMutation({
         onSuccess(data) {
@@ -33,10 +35,25 @@ const Post = ({
                 setLiked(liked + 1);
             }
         },
+        onError: () => {
+            setType("error");
+            setMessage(`Please try again`);
+            toggle();
+        }
     });
 
     const deletePost = trpc.post.deletePost.useMutation({
-        onSuccess: () => postRef.current?.remove()
+        onSuccess: () => {
+            setType("success");
+            setMessage(`Deleted post`);
+            toggle();
+            postRef.current?.remove();
+        },
+        onError: () => {
+            setType("error");
+            setMessage(`Please try again`);
+            toggle();
+        }
     });
 
     const { data: isFollowing, refetch } = trpc.user.getFollowingInfo.useQuery({
@@ -46,13 +63,13 @@ const Post = ({
     const followUser = trpc.follower.followUser.useMutation({
         onSuccess: () => {
             setType("success");
-            setContent(`Followed ${sender.name}`);
+            setMessage(`Followed ${sender.name}`);
             toggle();
             refetch();
         },
         onError: () => {
             setType("error");
-            setContent(`Please try again`);
+            setMessage(`Please try again`);
             toggle();
         }
     });
@@ -60,13 +77,13 @@ const Post = ({
     const unfollowUser = trpc.follower.unfollowUser.useMutation({
         onSuccess: () => {
             setType("success");
-            setContent(`Unfollowed ${sender.name}`);
+            setMessage(`Unfollowed ${sender.name}`);
             toggle();
             refetch();
         },
         onError: () => {
             setType("error");
-            setContent(`Please try again`);
+            setMessage(`Please try again`);
             toggle();
         }
     });
@@ -74,13 +91,13 @@ const Post = ({
     const reportPost = trpc.post.reportPost.useMutation({
         onSuccess: () => {
             setType("success");
-            setContent(`Report successful`);
+            setMessage(`Report successful`);
             toggle();
             postRef.current?.remove();
         },
         onError: () => {
             setType("error");
-            setContent(`Please try again`);
+            setMessage(`Please try again`);
             toggle();
         }
     })
@@ -91,6 +108,8 @@ const Post = ({
     const [showSettings, setShowSettings] = useState(false);
 
     const settingsRef = useRef<HTMLUListElement>(null);
+
+    const { setPostId, setShowModal, setContent, setIsPrivate } = useUpdatePost();
 
     const formatDate = (date: Date) => {
         const diff = Math.abs(new Date().getTime() - date.getTime());
@@ -109,8 +128,15 @@ const Post = ({
         return publish;
     }
 
+    const handleEditClick = () => {
+        setIsPrivate(isPrivate);
+        setContent(content);
+        setPostId(id);
+        setShowModal(true);
+    }
+
     return (
-        <div ref={postRef} className='relative flex p-1 min-w-[300px] w-full  gap-4 text-white'>
+        <div ref={postRef} className='relative flex p-1 min-w-[300px] w-full gap-2 sm:gap-4 text-white'>
             <Link href={`/${sender.name}`} className="w-[40px] h-[40px] relative">
                 <Image src={sender.image || ""} alt="" fill className="rounded-full transition-all duration-300 hover:brightness-75" />
             </Link>
@@ -130,11 +156,14 @@ const Post = ({
                     </div>
                 </div>
                 <p className='max-w-prose mb-4'>{content}</p>
-                <div className="flex items-center gap-2">
-                    <FaHeart 
-                        onClick={() => toggleLike.mutate({postId: id})}
-                        className={`cursor-pointer transition-colors duration-300 md:hover:text-primary-100 ${liked > 0 ? "text-primary" : "text-white"}`} 
-                    /> {liked}
+                <div className="flex items-center justify-between flex-wrap max-w-full">
+                    <div className="flex items-center gap-2">
+                        <FaHeart 
+                            onClick={() => toggleLike.mutate({postId: id})}
+                            className={`cursor-pointer transition-colors duration-300 md:hover:text-primary-100 ${liked > 0 ? "text-primary" : "text-white"}`} 
+                            /> {liked}
+                    </div>
+                    {isPrivate ? <p className="border-2 border-white text-white px-3 py-1 rounded-full">Private</p> : null}
                 </div>
             </div>
             <ul ref={settingsRef} className={`${showSettings ? "scale-y-100" : "scale-y-0"} z-[1] origin-top transition-transform duration-500 absolute top-3 right-3 p-2 bg-primary-900 rounded-lg`}>
@@ -148,9 +177,14 @@ const Post = ({
                     </li>)
                 }
                 {sender.id === session?.user?.id ?
-                    <li onClick={() => deletePost.mutate({postId: id})} className='cursor-pointer flex items-center gap-2 transition-colors hover:text-red-600 p-2'>
-                        <FaTrashAlt /> Delete
-                    </li>
+                    <>
+                        <li onClick={handleEditClick} className='cursor-pointer flex items-center gap-2 transition-colors hover:text-primary-100 p-2'>
+                            <FaPencilAlt /> Edit
+                        </li>
+                        <li onClick={() => deletePost.mutate({postId: id})} className='cursor-pointer flex items-center gap-2 transition-colors hover:text-red-600 p-2'>
+                            <FaTrashAlt /> Delete
+                        </li>
+                    </>
                     :
                     <li onClick={() => reportPost.mutate({postId: id})} className='cursor-pointer flex items-center gap-2 transition-colors hover:text-red-600 p-2'>
                         <FaFlag /> Report
