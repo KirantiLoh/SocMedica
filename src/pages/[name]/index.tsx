@@ -185,6 +185,7 @@ const ProfilePage = () => {
                             <h2 className='text-2xl font-semibold mb-2'>Posts</h2>
                             <ul className='flex flex-wrap gap-10'>
                                 {posts}
+                                {postList?.pages[postList.pages.length - 1]?.nextCursor && (postList?.pages[0]?.userPosts?.length ?? 0) > 0 ? <Image src="/spinner.svg" alt="Loading..." width={96} height={96} className="mx-auto" /> : null}
                             </ul>
                         </aside>
                         :

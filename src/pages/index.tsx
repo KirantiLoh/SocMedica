@@ -65,6 +65,7 @@ const Home: NextPage = () => {
           <ul className='flex flex-wrap gap-10'>
               {posts}
           </ul>
+          {postList?.pages[postList.pages.length - 1]?.nextCursor && !showExplore ? <Image src="/spinner.svg" alt="Loading..." width={96} height={96} className="mx-auto" /> : null }
           {showExplore ? 
             <Button color="secondary" className="w-max px-20 mx-auto" href="/explore">
               Explore

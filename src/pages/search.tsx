@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useContext, useEffect } from 'react';
 import { useInView } from 'react-cool-inview';
@@ -107,6 +108,7 @@ const SearchPage = () => {
         <h2 className='text-lg font-semibold mb-2'>Posts</h2>
         <ul className='flex gap-3 flex-col'>
           {posts}
+          {postList?.pages[postList.pages.length - 1]?.nextCursor && (postList?.pages[0]?.posts?.length ?? 0) > 0 ? <Image src="/spinner.svg" alt="Loading..." width={96} height={96} className="mx-auto" /> : null }
         </ul>      
       </section>
     </main>

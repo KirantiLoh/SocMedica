@@ -2,7 +2,8 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const user = "cle5py9hx0000vn0s2m9tebt2";
+  // User id
+  const user = "cledq23x10007vnvkwq2bvqoc";
 
   const arr = [...Array(100).keys()];
 
@@ -11,7 +12,7 @@ async function main() {
     await prisma.post.create({
       data: {
         senderId: user,
-        content: `Post no ${val}`,
+        content: `Post no ${val + 1}`,
       },
     });
   }
