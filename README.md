@@ -1,4 +1,4 @@
-# SocMeDia
+# SocMedica
 
 Social media web app created using T3 stack.
 
