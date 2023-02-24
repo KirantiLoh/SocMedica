@@ -44,9 +44,9 @@ const SideNav = () => {
             <h1 onClick={() => setShowSideNav(false)} className='text-4xl xs:text-2xl font-semibold'>
                 <Link href="/" className='flex items-center gap-3'>
                     <div className="relative w-[45px] aspect-square">
-                        <Image src="/SocMeDic.png" fill alt="SocMeDic" />
+                        <Image src="/SocMeDic.png" fill alt="SocMedica" />
                     </div>
-                     <span className='block xs:hidden md:block'>SocMeDic</span>     
+                     <span className='block xs:hidden md:block'>SocMedica</span>     
                 </Link>
             </h1>
             <ul onClick={() => setShowSideNav(false)} className='flex flex-col items-center justify-center gap-7'>
