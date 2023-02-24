@@ -24,8 +24,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
             <CreatePostProvider>
               <UpdatePostProvider>
                 <Head>
-                  <title>SocMeDic</title>
-                  <meta name="description" content="SocMeDic" />
+                  <title>SocMedica</title>
+                  <meta name="description" content="SocMedica" />
                   <link rel="icon" href="/favicon.ico" />
                 </Head>
                 <main className="w-full h-screen overflow-hidden flex bg-secondary-900 text-white">
