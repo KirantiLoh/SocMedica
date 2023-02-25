@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   // User id
-  const user = "cledq23x10007vnvkwq2bvqoc";
+  const user = "clek03v130000vnq8l2m4w39r";
 
   const arr = [...Array(100).keys()];
 

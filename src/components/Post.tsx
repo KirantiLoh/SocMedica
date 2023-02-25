@@ -28,18 +28,11 @@ const Post = ({
     const { setContent: setMessage, setType, toggle } = useToast();
 
     const toggleLike = trpc.post.toggleLikePost.useMutation({
-        onSuccess(data) {
-            if (data.message === "Unliked post") {
-                setLiked(liked - 1);
-            } else {
-                setLiked(liked + 1);
-            }
-        },
         onError: () => {
             setType("error");
             setMessage(`Please try again`);
             toggle();
-        }
+        },
     });
 
     const deletePost = trpc.post.deletePost.useMutation({
@@ -157,12 +150,19 @@ const Post = ({
                 </div>
                 <p className='max-w-prose mb-4'>{content}</p>
                 <div className="flex items-center justify-between flex-wrap max-w-full">
-                    <div className="flex items-center gap-2">
+                    <button className="flex items-center gap-2">
                         <FaHeart 
-                            onClick={() => toggleLike.mutate({postId: id})}
-                            className={`cursor-pointer transition-colors duration-300 md:hover:text-primary-100 ${liked > 0 ? "text-primary" : "text-white"}`} 
+                            onClick={() => {
+                                if (liked > likes) {
+                                    setLiked(liked - 1);
+                                } else {
+                                    setLiked(liked + 1);
+                                }
+                                toggleLike.mutate({postId: id})
+                            }}
+                            className={`cursor-pointer transition-colors duration-300 md:hover:text-primary-100 ${liked > likes ? "text-primary" : "text-white"}`} 
                             /> {liked}
-                    </div>
+                    </button>
                     {isPrivate ? <p className="border-2 border-white text-white px-3 py-1 rounded-full">Private</p> : null}
                 </div>
             </div>
